@@ -33,7 +33,7 @@ Windows 11 + FL Studio 向けに作っています。
 2. このフォルダで PowerShell を開き、次を実行します。初回は JUCE のダウンロードで数分かかります。
 
    ```powershell
-   cmake -B build -G "Visual Studio 17 2022" -A x64
+   cmake -B build -A x64
    cmake --build build --config Release
    ```
 
