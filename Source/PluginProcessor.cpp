@@ -12,6 +12,7 @@ InputTapProcessor::InputTapProcessor()
     latencyParam = params.getRawParameterValue ("latency");
     passParam    = params.getRawParameterValue ("passthrough");
     muteParam    = params.getRawParameterValue ("mute");
+    panParam     = params.getRawParameterValue ("pan");
 }
 
 InputTapProcessor::~InputTapProcessor()
@@ -32,6 +33,23 @@ juce::AudioProcessorValueTreeState::ParameterLayout InputTapProcessor::createLay
     layout.add (std::make_unique<AudioParameterFloat> (ParameterID { "latency", 1 }, "Buffer",
                     NormalisableRange<float> (3.0f, 200.0f, 1.0f, 0.5f), 20.0f,
                     AudioParameterFloatAttributes().withLabel ("ms")));
+
+    layout.add (std::make_unique<AudioParameterFloat> (ParameterID { "pan", 1 }, "Pan",
+                    NormalisableRange<float> (-100.0f, 100.0f, 1.0f), 0.0f,
+                    AudioParameterFloatAttributes()
+                        .withStringFromValueFunction ([] (float v, int)
+                        {
+                            const int i = juce::roundToInt (v);
+                            return i == 0 ? juce::String ("C")
+                                          : juce::String (std::abs (i)) + (i < 0 ? "L" : "R");
+                        })
+                        .withValueFromStringFunction ([] (const juce::String& t)
+                        {
+                            const auto s = t.trim().toUpperCase();
+                            if (s == "C" || s.isEmpty()) return 0.0f;
+                            const float n = std::abs (s.retainCharacters ("0123456789.").getFloatValue());
+                            return s.containsChar ('L') || s.startsWithChar ('-') ? -n : n;
+                        })));
 
     layout.add (std::make_unique<AudioParameterBool> (ParameterID { "passthrough", 1 }, "Pass Through Track Input", true));
     layout.add (std::make_unique<AudioParameterBool> (ParameterID { "mute", 1 }, "Mute Device", false));
@@ -58,10 +76,25 @@ void InputTapProcessor::prepareToPlay (double sampleRate, int samplesPerBlock)
     readTemp.setSize (2, InputSubscriber::capacity, false, true, true);
     outTemp.setSize (2, juce::jmax (samplesPerBlock, 4096), false, true, true);
 
-    gainSmoothed.reset (sampleRate, 0.02);
-    gainSmoothed.setCurrentAndTargetValue (juce::Decibels::decibelsToGain (gainParam->load()));
+    for (auto& g : gainSmoothed)
+        g.reset (sampleRate, 0.02);
+
+    updateGainTargets();
+    for (auto& g : gainSmoothed)
+        g.setCurrentAndTargetValue (g.getTargetValue());
 
     flushRequested = true;
+}
+
+void InputTapProcessor::updateGainTargets() noexcept
+{
+    const float gain = muteParam->load() > 0.5f ? 0.0f
+                                                : juce::Decibels::decibelsToGain (gainParam->load());
+
+    // Balance law: centre = unity on both sides, the opposite side fades out as you pan
+    const float pan = juce::jlimit (-1.0f, 1.0f, panParam->load() / 100.0f);
+    gainSmoothed[0].setTargetValue (gain * (pan > 0.0f ? 1.0f - pan : 1.0f));
+    gainSmoothed[1].setTargetValue (gain * (pan < 0.0f ? 1.0f + pan : 1.0f));
 }
 
 void InputTapProcessor::discardAll() noexcept
@@ -100,8 +133,7 @@ void InputTapProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
         return;
     }
 
-    gainSmoothed.setTargetValue (muteParam->load() > 0.5f ? 0.0f
-                                                          : juce::Decibels::decibelsToGain (gainParam->load()));
+    updateGainTargets();
 
     const double baseRatio = srcRate / hostRate;           // input samples per output sample
     const int maxNeeded = (int) std::ceil (numSamples * baseRatio * 1.01) + 8;
@@ -174,13 +206,9 @@ void InputTapProcessor::processBlock (juce::AudioBuffer<float>& buffer, juce::Mi
 
         fifo.finishedRead (juce::jmin (used, size1 + size2));
 
-        // Apply smoothed gain once for both channels
-        for (int i = 0; i < chunk; ++i)
-        {
-            const float g = gainSmoothed.getNextValue();
-            outTemp.getWritePointer (0)[i] *= g;
-            outTemp.getWritePointer (1)[i] *= g;
-        }
+        // Apply smoothed gain and pan
+        for (int ch = 0; ch < 2; ++ch)
+            gainSmoothed[ch].applyGain (outTemp.getWritePointer (ch), chunk);
 
         if (numOuts == 1)
         {

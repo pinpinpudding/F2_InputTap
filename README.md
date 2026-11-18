@@ -1,4 +1,4 @@
-# InputTap
+# F2_InputTap
 
 マイクなどの入力デバイスの音を、そのままプラグインの出力に流す VST3 エフェクトです。
 Windows 11 + FL Studio 向けに作っています。
@@ -19,6 +19,8 @@ Windows 11 + FL Studio 向けに作っています。
 | Buffer | 目安となる遅延量（3 〜 200 ms）。音が途切れるときは増やします |
 | Pass through track input | オンにすると、ミキサートラックに入ってきた音に入力デバイスの音を足して出力します。オフにすると入力デバイスの音だけを出力します |
 | Mute | 入力デバイスの音だけをミュートします |
+| Pan | 入力デバイスの音の左右定位（100L 〜 C 〜 100R） |
+| Reset | Gain・Buffer・Pan の右にあるボタン。その項目を初期値に戻します |
 
 ステータス欄には、サンプルレート、バッファ量、途切れた回数（Underruns）、このデバイスを使っているインスタンスの数が表示されます。
 
@@ -37,19 +39,19 @@ Windows 11 + FL Studio 向けに作っています。
    cmake --build build --config Release
    ```
 
-3. `build\InputTap_artefacts\Release\VST3\InputTap.vst3` ができます。
+3. `build\InputTap_artefacts\Release\VST3\F2_InputTap.vst3` ができます。
 
 ### B. GitHub でビルドする（Visual Studio 不要）
 
 1. GitHub に新しいリポジトリを作り、このフォルダの中身をすべてアップロードします。
 2. 「Actions」タブで「Build Windows VST3」が自動で動きます（約 10 分）。
-3. 完了した実行結果のページ下部にある「Artifacts」から `InputTap-VST3-Windows-x64` をダウンロードして展開します。
+3. 完了した実行結果のページ下部にある「Artifacts」から `F2_InputTap-v1.1.0-Windows-x64` をダウンロードして展開します。
 
 ## FL Studio への導入
 
-1. `InputTap.vst3` フォルダごと `C:\Program Files\Common Files\VST3\` にコピーします（管理者権限が必要です）。
+1. `F2_InputTap.vst3` フォルダごと `C:\Program Files\Common Files\VST3\` にコピーします（管理者権限が必要です）。
 2. FL Studio で「Options → Manage plugins」を開き、「Find installed plugins」を押します。
-3. ミキサーのトラックのエフェクトスロットに「InputTap」を挿し、Input device を選びます。
+3. ミキサーのトラックのエフェクトスロットに「F2_InputTap」を挿し、Input device を選びます。
 
 ### FL Studio での注意点
 
@@ -69,6 +71,8 @@ Windows 11 + FL Studio 向けに作っています。
 | 抜き差し後に音が出ない | Reconnect を押します |
 
 ## ファイル構成
+
+- `dist/Read me.txt` — 配布用の説明書。Actions のビルド結果に自動で同梱されます
 
 - `Source/InputHub.*` — 入力デバイスの管理。プロセス内で共有し、同じデバイスは 1 回だけ開きます
 - `Source/PluginProcessor.*` — FIFO からの読み出し、リサンプリング、クロックずれの補正

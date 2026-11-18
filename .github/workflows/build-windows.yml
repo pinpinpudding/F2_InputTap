@@ -16,8 +16,17 @@ jobs:
       - name: Build
         run: cmake --build build --config Release --parallel
 
-      - name: Upload VST3
+      - name: Package
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force package | Out-Null
+          Copy-Item -Recurse build/InputTap_artefacts/Release/VST3/F2_InputTap.vst3 package/
+          # Read me.txt: CRLF + UTF-8 BOM so it opens correctly in any Notepad
+          $text = (Get-Content -Raw -Encoding utf8 "dist/Read me.txt") -replace "`r?`n", "`r`n"
+          [IO.File]::WriteAllText("$PWD/package/Read me.txt", $text, [Text.UTF8Encoding]::new($true))
+
+      - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: InputTap-VST3-Windows-x64
-          path: build/InputTap_artefacts/Release/VST3/
+          name: F2_InputTap-v1.1.0-Windows-x64
+          path: package/

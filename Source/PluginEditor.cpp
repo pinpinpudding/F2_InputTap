@@ -21,18 +21,13 @@ InputTapEditor::InputTapEditor (InputTapProcessor& p)
     rescanButton.onClick    = [this] { refreshDeviceList (true); };
     reconnectButton.onClick = [this] { proc.reconnect(); refreshDeviceList (false); };
 
-    for (auto* s : { &gainSlider, &latencySlider })
-    {
-        s->setSliderStyle (juce::Slider::LinearHorizontal);
-        s->setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 22);
-        addAndMakeVisible (s);
-    }
-
-    gainSlider.setTextValueSuffix (" dB");
-    latencySlider.setTextValueSuffix (" ms");
+    setupSliderRow (gainSlider,    gainReset,    "gain");
+    setupSliderRow (latencySlider, latencyReset, "latency");
+    setupSliderRow (panSlider,     panReset,     "pan");
 
     addAndMakeVisible (gainLabel);
     addAndMakeVisible (latencyLabel);
+    addAndMakeVisible (panLabel);
     addAndMakeVisible (passButton);
     addAndMakeVisible (muteButton);
 
@@ -42,17 +37,43 @@ InputTapEditor::InputTapEditor (InputTapProcessor& p)
 
     gainAttachment    = std::make_unique<SliderAttachment> (proc.params, "gain", gainSlider);
     latencyAttachment = std::make_unique<SliderAttachment> (proc.params, "latency", latencySlider);
+    panAttachment     = std::make_unique<SliderAttachment> (proc.params, "pan", panSlider);
+
+    // Pan text (e.g. "25L", "C", "40R") comes from the parameter; gain/latency get a unit suffix
+    gainSlider.setTextValueSuffix (" dB");
+    latencySlider.setTextValueSuffix (" ms");
     passAttachment    = std::make_unique<ButtonAttachment> (proc.params, "passthrough", passButton);
     muteAttachment    = std::make_unique<ButtonAttachment> (proc.params, "mute", muteButton);
 
     refreshDeviceList (false);
-    setSize (460, 280);
+    setSize (480, 320);
     startTimerHz (8);
 }
 
 InputTapEditor::~InputTapEditor()
 {
     stopTimer();
+}
+
+void InputTapEditor::setupSliderRow (juce::Slider& s, juce::TextButton& resetButton, const juce::String& paramID)
+{
+    s.setSliderStyle (juce::Slider::LinearHorizontal);
+    s.setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 22);
+    addAndMakeVisible (s);
+
+    resetButton.setTooltip ("Reset to default");
+    resetButton.onClick = [this, paramID] { resetParameter (paramID); };
+    addAndMakeVisible (resetButton);
+}
+
+void InputTapEditor::resetParameter (const juce::String& paramID)
+{
+    if (auto* p = proc.params.getParameter (paramID))
+    {
+        p->beginChangeGesture();
+        p->setValueNotifyingHost (p->getDefaultValue());
+        p->endChangeGesture();
+    }
 }
 
 void InputTapEditor::refreshDeviceList (bool rescan)
@@ -104,7 +125,7 @@ void InputTapEditor::paint (juce::Graphics& g)
     g.fillAll (juce::Colour (0xff1e2127));
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (18.0f, juce::Font::bold));
-    g.drawText ("InputTap", 14, 8, 200, 24, juce::Justification::centredLeft);
+    g.drawText ("F2_InputTap", 14, 8, 300, 24, juce::Justification::centredLeft);
 }
 
 void InputTapEditor::resized()
@@ -120,15 +141,20 @@ void InputTapEditor::resized()
     row.removeFromRight (6);
     deviceBox.setBounds (row);
 
-    r.removeFromTop (12);
-    row = r.removeFromTop (26);
-    gainLabel.setBounds (row.removeFromLeft (90));
-    gainSlider.setBounds (row);
+    auto layoutRow = [&r] (juce::Label& label, juce::Slider& slider, juce::TextButton& reset)
+    {
+        auto line = r.removeFromTop (26);
+        label.setBounds (line.removeFromLeft (90));
+        reset.setBounds (line.removeFromRight (64));
+        line.removeFromRight (6);
+        slider.setBounds (line);
+        r.removeFromTop (6);
+    };
 
     r.removeFromTop (6);
-    row = r.removeFromTop (26);
-    latencyLabel.setBounds (row.removeFromLeft (90));
-    latencySlider.setBounds (row);
+    layoutRow (gainLabel,    gainSlider,    gainReset);
+    layoutRow (latencyLabel, latencySlider, latencyReset);
+    layoutRow (panLabel,     panSlider,     panReset);
 
     r.removeFromTop (8);
     row = r.removeFromTop (24);

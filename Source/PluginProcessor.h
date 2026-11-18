@@ -20,7 +20,7 @@ public:
     juce::AudioProcessorEditor* createEditor() override;
     bool hasEditor() const override { return true; }
 
-    const juce::String getName() const override { return "InputTap"; }
+    const juce::String getName() const override { return "F2_InputTap"; }
     bool acceptsMidi() const override { return false; }
     bool producesMidi() const override { return false; }
     double getTailLengthSeconds() const override { return 0.0; }
@@ -73,7 +73,7 @@ private:
     double smoothedFill = 0.0;
     juce::LagrangeInterpolator interpolators[2];
     juce::AudioBuffer<float> readTemp, outTemp;
-    juce::SmoothedValue<float> gainSmoothed;
+    juce::SmoothedValue<float> gainSmoothed[2];   // per channel: gain x pan
 
     std::atomic<bool> flushRequested { true };
     std::atomic<int> underruns { 0 };
@@ -83,6 +83,9 @@ private:
     std::atomic<float>* latencyParam = nullptr;
     std::atomic<float>* passParam = nullptr;
     std::atomic<float>* muteParam = nullptr;
+    std::atomic<float>* panParam = nullptr;
+
+    void updateGainTargets() noexcept;
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (InputTapProcessor)
 };

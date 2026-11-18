@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 # Windows: link the C++ runtime statically so the .vst3 has no extra DLL dependencies
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-project(InputTap VERSION 1.0.0 LANGUAGES C CXX)
+project(InputTap VERSION 1.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -21,8 +21,9 @@ else()
 endif()
 
 juce_add_plugin(InputTap
-    COMPANY_NAME             "InputTap"
-    PRODUCT_NAME             "InputTap"
+    COMPANY_NAME             "F2"
+    PRODUCT_NAME             "F2_InputTap"
+    # Plugin codes are unchanged so existing FL Studio projects still find the plugin
     PLUGIN_MANUFACTURER_CODE Itap
     PLUGIN_CODE              Itp1
     FORMATS                  VST3

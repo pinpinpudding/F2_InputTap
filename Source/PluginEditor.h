@@ -24,14 +24,18 @@ private:
     juce::ComboBox deviceBox;
     juce::TextButton rescanButton { "Rescan" }, reconnectButton { "Reconnect" };
 
-    juce::Slider gainSlider, latencySlider;
-    juce::Label gainLabel { {}, "Gain" }, latencyLabel { {}, "Buffer" };
+    void setupSliderRow (juce::Slider&, juce::TextButton& resetButton, const juce::String& paramID);
+    void resetParameter (const juce::String& paramID);
+
+    juce::Slider gainSlider, latencySlider, panSlider;
+    juce::Label gainLabel { {}, "Gain" }, latencyLabel { {}, "Buffer" }, panLabel { {}, "Pan" };
+    juce::TextButton gainReset { "Reset" }, latencyReset { "Reset" }, panReset { "Reset" };
     juce::ToggleButton passButton { "Pass through track input" }, muteButton { "Mute" };
     juce::Label statusLabel;
 
     using SliderAttachment = juce::AudioProcessorValueTreeState::SliderAttachment;
     using ButtonAttachment = juce::AudioProcessorValueTreeState::ButtonAttachment;
-    std::unique_ptr<SliderAttachment> gainAttachment, latencyAttachment;
+    std::unique_ptr<SliderAttachment> gainAttachment, latencyAttachment, panAttachment;
     std::unique_ptr<ButtonAttachment> passAttachment, muteAttachment;
 
     juce::StringArray deviceNames;
