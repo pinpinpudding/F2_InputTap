@@ -4,6 +4,9 @@ on:
   push:
   workflow_dispatch:
 
+permissions:
+  contents: write   # needed to publish the release
+
 jobs:
   build:
     runs-on: windows-latest
@@ -30,3 +33,20 @@ jobs:
         with:
           name: F2_InputTap-v1.1.0-Windows-x64
           path: package/
+
+      # Publish the zip on the repository's Releases page (simple, permanent download link)
+      - name: Publish release
+        if: github.ref == 'refs/heads/main'
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $tag = "v1.1.0"
+          $zip = "F2_InputTap-$tag-Windows-x64.zip"
+          Compress-Archive -Path package/* -DestinationPath $zip -Force
+          gh release view $tag 2>$null
+          if ($LASTEXITCODE -eq 0) {
+            gh release upload $tag $zip --clobber
+          } else {
+            gh release create $tag $zip --title "F2_InputTap $tag" --notes "Windows 64bit / VST3。zip を展開し、F2_InputTap.vst3 を C:\Program Files\Common Files\VST3\ にコピーしてください。詳しくは同梱の Read me.txt を参照。"
+          }
