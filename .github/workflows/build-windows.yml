@@ -47,6 +47,7 @@ jobs:
           gh release view $tag 2>$null
           if ($LASTEXITCODE -eq 0) {
             gh release upload $tag $zip --clobber
+            gh release edit $tag --title "F2_Input_Tap $tag" --notes "Windows 64bit / VST3。zip を展開し、F2_Input_Tap.vst3 を C:\Program Files\Common Files\VST3\ にコピーしてください。詳しくは同梱の readme.txt を参照。"
           } else {
             gh release create $tag $zip --title "F2_Input_Tap $tag" --notes "Windows 64bit / VST3。zip を展開し、F2_Input_Tap.vst3 を C:\Program Files\Common Files\VST3\ にコピーしてください。詳しくは同梱の readme.txt を参照。"
           }
