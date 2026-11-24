@@ -1,4 +1,4 @@
-# F2_InputTap
+# F2_Input_Tap
 
 マイクなどの入力デバイスの音を、そのままプラグインの出力に流す VST3 エフェクトです。
 Windows 11 + FL Studio 向けに作っています。
@@ -39,25 +39,25 @@ Windows 11 + FL Studio 向けに作っています。
    cmake --build build --config Release
    ```
 
-3. `build\InputTap_artefacts\Release\VST3\F2_InputTap.vst3` ができます。
+3. `build\F2_Input_Tap_artefacts\Release\VST3\F2_Input_Tap.vst3` ができます。
 
 ### B. GitHub でビルドする（Visual Studio 不要）
 
 1. GitHub に新しいリポジトリを作り、このフォルダの中身をすべてアップロードします。
 2. 「Actions」タブで「Build Windows VST3」が自動で動きます（約 10 分）。
-3. 完了した実行結果のページ下部にある「Artifacts」から `F2_InputTap-v1.1.0-Windows-x64` をダウンロードして展開します。
+3. 完了した実行結果のページ下部にある「Artifacts」から `F2_Input_Tap-v1.1.0-Windows-x64` をダウンロードして展開します。
 
 ## FL Studio への導入
 
-1. `F2_InputTap.vst3` フォルダごと `C:\Program Files\Common Files\VST3\` にコピーします（管理者権限が必要です）。
+1. `F2_Input_Tap.vst3` フォルダごと `C:\Program Files\Common Files\VST3\` にコピーします（管理者権限が必要です）。
 2. FL Studio で「Options → Manage plugins」を開き、「Find installed plugins」を押します。
-3. ミキサーのトラックのエフェクトスロットに「F2_InputTap」を挿し、Input device を選びます。
+3. ミキサーのトラックのエフェクトスロットに「F2_Input_Tap」を挿し、Input device を選びます。
 
 ### FL Studio での注意点
 
 - **Smart disable をオフにしてください。** FL Studio は無音のトラックのプラグインを自動で止めることがあり、止まるとマイクの音も出なくなります。ミキサーのプラグインスロットのメニュー、または「Tools → Macros → Switch smart disable for all plugins」で切り替えられます。
-- 同じマイクを複数のトラックで使いたい場合は、各トラックに InputTap を挿して同じデバイスを選ぶだけで構いません。
-- 1 本のマイクを FL Studio の ASIO 入力と InputTap の両方で使う構成はおすすめしません。ASIO ドライバがデバイスを排他的に掴んでいると、InputTap からは開けないことがあります。
+- 同じマイクを複数のトラックで使いたい場合は、各トラックに F2_Input_Tap を挿して同じデバイスを選ぶだけで構いません。
+- 1 本のマイクを FL Studio の ASIO 入力と F2_Input_Tap の両方で使う構成はおすすめしません。ASIO ドライバがデバイスを排他的に掴んでいると、InputTap からは開けないことがあります。
 - 遅延は「Buffer の設定値」と「FL Studio のバッファ長」の大きい方が目安になります。モニター用途で遅延を減らしたいときは、FL Studio の Audio Settings でバッファを小さくし、Buffer も下げてください。
 
 ## うまく動かないとき
@@ -72,7 +72,7 @@ Windows 11 + FL Studio 向けに作っています。
 
 ## ファイル構成
 
-- `dist/Read me.txt` — 配布用の説明書。Actions のビルド結果に自動で同梱されます
+- `dist/readme.txt` — 配布用の説明書。Actions のビルド結果に自動で同梱されます
 
 - `Source/InputHub.*` — 入力デバイスの管理。プロセス内で共有し、同じデバイスは 1 回だけ開きます
 - `Source/PluginProcessor.*` — FIFO からの読み出し、リサンプリング、クロックずれの補正

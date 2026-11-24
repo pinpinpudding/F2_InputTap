@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 # Windows: link the C++ runtime statically so the .vst3 has no extra DLL dependencies
 set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
-project(InputTap VERSION 1.1.0 LANGUAGES C CXX)
+project(F2_Input_Tap VERSION 1.1.0 LANGUAGES C CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -20,9 +20,9 @@ else()
     FetchContent_MakeAvailable(JUCE)
 endif()
 
-juce_add_plugin(InputTap
+juce_add_plugin(F2_Input_Tap
     COMPANY_NAME             "F2"
-    PRODUCT_NAME             "F2_InputTap"
+    PRODUCT_NAME             "F2_Input_Tap"
     # Plugin codes are unchanged so existing FL Studio projects still find the plugin
     PLUGIN_MANUFACTURER_CODE Itap
     PLUGIN_CODE              Itp1
@@ -33,12 +33,12 @@ juce_add_plugin(InputTap
     VST3_CATEGORIES          Fx Tools
     COPY_PLUGIN_AFTER_BUILD  FALSE)
 
-target_sources(InputTap PRIVATE
+target_sources(F2_Input_Tap PRIVATE
     Source/InputHub.cpp
     Source/PluginProcessor.cpp
     Source/PluginEditor.cpp)
 
-target_compile_definitions(InputTap PUBLIC
+target_compile_definitions(F2_Input_Tap PUBLIC
     JUCE_WEB_BROWSER=0
     JUCE_USE_CURL=0
     JUCE_VST3_CAN_REPLACE_VST2=0
@@ -48,7 +48,7 @@ target_compile_definitions(InputTap PUBLIC
     JUCE_DIRECTSOUND=0
     JUCE_JACK=0)
 
-target_link_libraries(InputTap
+target_link_libraries(F2_Input_Tap
     PRIVATE
         juce::juce_audio_utils
         juce::juce_audio_devices
