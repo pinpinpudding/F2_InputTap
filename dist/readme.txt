@@ -25,7 +25,7 @@
 
 ■ インストール
 
-  1. 「F2_Input_Tap.vst3」をフォルダごと次の場所に直接コピーします。
+  1. 「F2_InputTap.vst3」をフォルダごと次の場所に直接コピーします。
        "C:\Program Files\Common Files\VST3\"
 
   2. DAW でプラグインを再スキャンします。
@@ -36,7 +36,7 @@
 
 ■ アンインストール
 
-  "F2_Input_Tap.vst3"を直接削除してください。
+  "F2_InputTap.vst3"を直接削除してください。
 
 
 

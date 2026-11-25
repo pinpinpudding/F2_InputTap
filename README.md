@@ -1,79 +1,87 @@
 # F2_Input_Tap
 
-マイクなどの入力デバイスの音を、そのままプラグインの出力に流す VST3 エフェクトです。
-Windows 11 + FL Studio 向けに作っています。
+入力デバイス直結VST3プラグイン（Windows 64bit）
 
-- FL Studio が使っているオーディオデバイス（ASIO など）とは別に、プラグインが自分で入力デバイスを開きます。
-- 入力は WASAPI 共有モードで開くので、FL Studio や他のアプリと同じマイクを同時に使えます。
-- 複数インスタンスに対応しています。同じデバイスを選んだインスタンス同士はデバイスを 1 回だけ開いて共有し、別々のデバイスを選べばそれぞれ独立して動きます。
-- デバイスと FL Studio のクロックのずれは、リサンプリングで自動補正します。
+**[ダウンロード（F2_InputTap-v1.1.0-Windows-x64.zip）](https://github.com/pinpinpudding/F2_InputTap/releases/latest/download/F2_InputTap-v1.1.0-Windows-x64.zip)**
 
-## 機能
+## 概要
 
-| 項目 | 内容 |
+- マイクやオーディオインターフェースなどの「入力デバイス」の音を、そのままプラグインの出力に流すVST3エフェクトです。
+- DAWで指定しているデバイスとは別に、プラグイン自身が入力デバイスを開きます。
+- WASAPI共有モードで開くため、他アプリと干渉せずDAW内で入力を複数設定することができます。
+- 入力デバイスとDAWのクロックのずれは自動で補正します。
+
+## 動作環境
+
+- Windows 10 / 11（64bit）
+- VST3に対応したDAW
+
+## インストール
+
+1. 「F2_InputTap.vst3」をフォルダごと次の場所に直接コピーします。
+   `C:\Program Files\Common Files\VST3\`
+2. DAW でプラグインを再スキャンします。
+3. ミキサーのエフェクトスロットに「F2_Input_Tap」を挿します。
+
+## アンインストール
+
+`F2_InputTap.vst3` を直接削除してください。
+
+## 画面の説明
+
+| 項目 | 説明 |
 |---|---|
-| Input device | 入力デバイスの選択。選んだデバイスはプロジェクトに保存されます |
-| Rescan | デバイス一覧の再取得（USB マイクを後から挿したとき） |
-| Reconnect | デバイスを開き直す（抜き差しや、Windows 側の設定変更の後） |
-| Gain | 入力音量（-60 〜 +24 dB） |
-| Buffer | 目安となる遅延量（3 〜 200 ms）。音が途切れるときは増やします |
-| Pass through track input | オンにすると、ミキサートラックに入ってきた音に入力デバイスの音を足して出力します。オフにすると入力デバイスの音だけを出力します |
-| Mute | 入力デバイスの音だけをミュートします |
-| Pan | 入力デバイスの音の左右定位（100L 〜 C 〜 100R） |
-| Reset | Gain・Buffer・Pan の右にあるボタン。その項目を初期値に戻します |
+| Input device | 入力デバイスの選択。プロジェクトに保存されます。 |
+| Rescan | 入力デバイス一覧の更新。 |
+| Reconnect | 入力デバイスを開き直します。 |
+| Gain | 入力デバイスの音量です。 |
+| Buffer | 入力デバイスの遅延です。音がプツプツ途切れるときは大きくしてください。 |
+| Pan | 入力デバイスの定位です。入力デバイスの音にだけ効きます。 |
+| Pass through track input | オン：トラックに来ている音に、入力デバイスの音を足して出力します。<br>オフ：入力デバイスの音だけを出力します。 |
+| Mute | 入力デバイスの音だけをミュートします。 |
 
-ステータス欄には、サンプルレート、バッファ量、途切れた回数（Underruns）、このデバイスを使っているインスタンスの数が表示されます。
-
-## ビルド方法
-
-### A. 自分の PC でビルドする
-
-1. 次をインストールします。
-   - [Visual Studio 2022 Community](https://visualstudio.microsoft.com/ja/vs/community/)（「C++ によるデスクトップ開発」ワークロードを選択）
-   - [CMake](https://cmake.org/download/) 3.22 以上（インストール時に「Add CMake to the system PATH」を選択）
-   - [Git for Windows](https://git-scm.com/download/win)
-2. このフォルダで PowerShell を開き、次を実行します。初回は JUCE のダウンロードで数分かかります。
-
-   ```powershell
-   cmake -B build -A x64
-   cmake --build build --config Release
-   ```
-
-3. `build\F2_Input_Tap_artefacts\Release\VST3\F2_Input_Tap.vst3` ができます。
-
-### B. GitHub でビルドする（Visual Studio 不要）
-
-1. GitHub に新しいリポジトリを作り、このフォルダの中身をすべてアップロードします。
-2. 「Actions」タブで「Build Windows VST3」が自動で動きます（約 10 分）。
-3. 完了した実行結果のページ下部にある「Artifacts」から `F2_Input_Tap-v1.1.0-Windows-x64` をダウンロードして展開します。
-
-## FL Studio への導入
-
-1. `F2_Input_Tap.vst3` フォルダごと `C:\Program Files\Common Files\VST3\` にコピーします（管理者権限が必要です）。
-2. FL Studio で「Options → Manage plugins」を開き、「Find installed plugins」を押します。
-3. ミキサーのトラックのエフェクトスロットに「F2_Input_Tap」を挿し、Input device を選びます。
-
-### FL Studio での注意点
-
-- **Smart disable をオフにしてください。** FL Studio は無音のトラックのプラグインを自動で止めることがあり、止まるとマイクの音も出なくなります。ミキサーのプラグインスロットのメニュー、または「Tools → Macros → Switch smart disable for all plugins」で切り替えられます。
-- 同じマイクを複数のトラックで使いたい場合は、各トラックに F2_Input_Tap を挿して同じデバイスを選ぶだけで構いません。
-- 1 本のマイクを FL Studio の ASIO 入力と F2_Input_Tap の両方で使う構成はおすすめしません。ASIO ドライバがデバイスを排他的に掴んでいると、InputTap からは開けないことがあります。
-- 遅延は「Buffer の設定値」と「FL Studio のバッファ長」の大きい方が目安になります。モニター用途で遅延を減らしたいときは、FL Studio の Audio Settings でバッファを小さくし、Buffer も下げてください。
-
-## うまく動かないとき
-
-| 症状 | 対処 |
+| ステータス表示 | 説明 |
 |---|---|
-| デバイス一覧に出てこない | Windows の「サウンドの設定 → 入力」でデバイスが有効か確認し、Rescan を押します |
-| `Could not create device` / 開けない | 他のアプリがそのデバイスを排他モードで使っていないか確認します。Windows のサウンドコントロールパネルで、デバイスのプロパティ「詳細」タブにある「アプリケーションによりこのデバイスを排他的に制御できるようにする」をオフにすると直ることがあります |
-| 無音 | Windows の「設定 → プライバシーとセキュリティ → マイク」で「デスクトップ アプリがマイクにアクセスできるようにする」がオンになっているか確認します |
-| ときどきプツプツ途切れる（Underruns が増える） | Buffer を 40〜60 ms に上げます |
-| 抜き差し後に音が出ない | Reconnect を押します |
+| Running / Stopped | 入力デバイスのインジケータです。 |
+| Hz | 入力デバイスのサンプリングレートです。 |
+| buffered | 蓄積されている音の量です。遅延量とほぼ同義です。 |
+| Underruns | 音が途切れた回数です。増えるならBufferの値を上げてください。 |
+| Instances on this device | 同じデバイスを使用しているプラグインの数です。 |
 
-## ファイル構成
+## 注意点
 
-- `dist/readme.txt` — 配布用の説明書。Actions のビルド結果に自動で同梱されます
+- Smart disable はオフにしてください。オンのままだと、無音のトラックでプラグインが自動停止し、マイクの音も出なくなります。
+- 「Could not create device」などのエラーが出るときは、他のアプリがそのデバイスを独占していないか確認してください。
 
-- `Source/InputHub.*` — 入力デバイスの管理。プロセス内で共有し、同じデバイスは 1 回だけ開きます
+## 免責事項
+
+本ソフトウェアは無保証です。使用によって生じたいかなる損害についても、作者は責任を負いません。
+
+This plugin uses JUCE (https://juce.com/).
+VST is a registered trademark of Steinberg Media Technologies GmbH.
+
+---
+
+## 開発者向け
+
+### ビルド
+
+GitHub に push すると、Actions（`.github/workflows/build-windows.yml`）が Windows 版をビルドし、
+[Releases](https://github.com/pinpinpudding/F2_InputTap/releases) の zip を自動で更新します。
+
+自分の PC でビルドする場合は、Visual Studio 2022（C++ によるデスクトップ開発）と CMake 3.22 以上を入れて、次を実行します。
+
+```powershell
+cmake -B build -A x64
+cmake --build build --config Release
+```
+
+`build\F2_InputTap_artefacts\Release\VST3\F2_InputTap.vst3` ができます。
+
+### ファイル構成
+
+- `dist/readme.txt` — 配布用の説明書。zip に自動で同梱されます
+- `dist/release-notes.md` — Releases ページの説明文
+- `Source/InputHub.*` — 入力デバイスの管理。同じデバイスはプロセス内で 1 回だけ開いて共有します
 - `Source/PluginProcessor.*` — FIFO からの読み出し、リサンプリング、クロックずれの補正
 - `Source/PluginEditor.*` — 画面
