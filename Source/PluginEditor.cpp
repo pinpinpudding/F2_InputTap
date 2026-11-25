@@ -125,7 +125,7 @@ void InputTapEditor::paint (juce::Graphics& g)
     g.fillAll (juce::Colour (0xff1e2127));
     g.setColour (juce::Colours::white);
     g.setFont (juce::FontOptions (18.0f, juce::Font::bold));
-    g.drawText ("F2_Input_Tap", 14, 8, 300, 24, juce::Justification::centredLeft);
+    g.drawText ("F2_InputTap_vst3", 14, 8, 300, 24, juce::Justification::centredLeft);
 }
 
 void InputTapEditor::resized()

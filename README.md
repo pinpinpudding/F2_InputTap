@@ -1,8 +1,8 @@
-# F2_Input_Tap
+# F2_InputTap_vst3
 
 入力デバイス直結VST3プラグイン（Windows 64bit）
 
-**[ダウンロード（F2_InputTap-v1.1.0-Windows-x64.zip）](https://github.com/pinpinpudding/F2_InputTap/releases/latest/download/F2_InputTap-v1.1.0-Windows-x64.zip)**
+**[ダウンロード（F2_InputTap_vst3-v1.1.0-Windows-x64.zip）](../../releases/latest/download/F2_InputTap_vst3-v1.1.0-Windows-x64.zip)**
 
 ## 概要
 
@@ -21,7 +21,7 @@
 1. 「F2_InputTap.vst3」をフォルダごと次の場所に直接コピーします。
    `C:\Program Files\Common Files\VST3\`
 2. DAW でプラグインを再スキャンします。
-3. ミキサーのエフェクトスロットに「F2_Input_Tap」を挿します。
+3. ミキサーのエフェクトスロットに「F2_InputTap_vst3」を挿します。
 
 ## アンインストール
 
@@ -67,7 +67,7 @@ VST is a registered trademark of Steinberg Media Technologies GmbH.
 ### ビルド
 
 GitHub に push すると、Actions（`.github/workflows/build-windows.yml`）が Windows 版をビルドし、
-[Releases](https://github.com/pinpinpudding/F2_InputTap/releases) の zip を自動で更新します。
+[Releases](../../releases) の zip を自動で更新します。
 
 自分の PC でビルドする場合は、Visual Studio 2022（C++ によるデスクトップ開発）と CMake 3.22 以上を入れて、次を実行します。
 

@@ -31,7 +31,7 @@ jobs:
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: F2_InputTap-v1.1.0-Windows-x64
+          name: F2_InputTap_vst3-v1.1.0-Windows-x64
           path: package/
 
       # Publish the zip on the repository's Releases page (simple, permanent download link)
@@ -42,9 +42,9 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           $tag = "v1.1.0"
-          $zip = "F2_InputTap-$tag-Windows-x64.zip"
+          $zip = "F2_InputTap_vst3-$tag-Windows-x64.zip"
           Compress-Archive -Path package/* -DestinationPath $zip -Force
-          $title = "F2_Input_Tap $tag"
+          $title = "F2_InputTap_vst3 $tag"
           $notes = "dist/release-notes.md"
           gh release view $tag 2>$null
           if ($LASTEXITCODE -eq 0) {

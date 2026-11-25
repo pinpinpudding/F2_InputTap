@@ -23,7 +23,7 @@ endif()
 juce_add_plugin(F2_InputTap
     COMPANY_NAME             "F2"
     PRODUCT_NAME             "F2_InputTap"      # file name: F2_InputTap.vst3
-    PLUGIN_NAME              "F2_Input_Tap"     # name shown in the DAW
+    PLUGIN_NAME              "F2_InputTap_vst3"     # name shown in the DAW
     # Plugin codes are unchanged so existing FL Studio projects still find the plugin
     PLUGIN_MANUFACTURER_CODE Itap
     PLUGIN_CODE              Itp1

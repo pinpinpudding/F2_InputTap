@@ -17,7 +17,7 @@
 1. 下の zip を展開し、「F2_InputTap.vst3」をフォルダごと次の場所に直接コピーします。
    `C:\Program Files\Common Files\VST3\`
 2. DAW でプラグインを再スキャンします。
-3. ミキサーのエフェクトスロットに「F2_Input_Tap」を挿します。
+3. ミキサーのエフェクトスロットに「F2_InputTap_vst3」を挿します。
 
 画面の説明や注意点は、zip に同梱の readme.txt を参照してください。
 
